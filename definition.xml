@@ -106,6 +106,10 @@
 				displayChart(settings.chartType, settings.groupId, settings.groupName, settings.statusType, settings.refreshInterval, settings.includeSubgroup);
 			}
 			
+			function groupSort(arg1, arg2) {
+				return naturalSort(arg1.name, arg2.name);
+			}
+
 			function goodLoad(settings){
 				var statusBar = $("#statusBar");
 
@@ -114,6 +118,7 @@
 					statusBar.text("Loaded and READY!");
 					statusBar.show().fadeOut(2000);
 					var optionsValues = '<select id="elementGroupId">';
+					groups.sort(groupSort);
 					$.each(groups, function(index,group) {
 						optionsValues += '<option value="' + group.id + '">' + group.name + '</option>';
 					});
