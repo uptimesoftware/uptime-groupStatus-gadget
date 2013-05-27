@@ -89,7 +89,7 @@
 //console.log("saveSettings includeSubgroup="+includeSubgroup);
 				//save group name for now, just for demo purposes
 				var settings = {'groupId':groupId, 'chartType':chartTypeId, 'groupName':groupName, 'statusType':statusTypeId, 'refreshInterval':refreshInterval,'includeSubgroup':includeSubgroup};
-				uptimeGadget.saveSettings(settings, onGoodSave, onBadAjax);
+				uptimeGadget.saveSettings(settings).then(onGoodSave, onBadAjax);
 			});
 
 			$("#cancelSave").click(function(){
@@ -182,7 +182,7 @@
 			}
 
 			uptimeGadget.registerOnEditHandler(showEditPanel);
-			uptimeGadget.registerOnLoadHandler(function(){uptimeGadget.loadSettings(goodLoad, onBadAjax);});
+			uptimeGadget.registerOnLoadHandler(function(){uptimeGadget.loadSettings().then(goodLoad, onBadAjax);});
 			//uptimeGadget.registerOnUploadFile(function (e){});
 		});				  
     </script>
