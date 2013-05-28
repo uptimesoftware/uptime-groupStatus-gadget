@@ -8,11 +8,11 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	#includeResources(jquery,highcharts)
+	
 	<title>Group Status</title>
-	<link href="/styles/uptime.css" type="text/css" rel="stylesheet" />
 
-	<script type="text/javascript" src="/ajax/jquery.js?v=7.2.0.0"></script>
-	<script type="text/javascript" src="/ajax/highcharts/highcharts.js?v=7.2.0.0"></script>
+	<link rel="stylesheet" type="text/css" href="__UPTIME_GADGET_BASE__/groupStatus.css" />
 
 	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.GroupCurrentStatusBarChart.js"></script>
 	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.GroupCurrentStatusPieChart.js"></script>
@@ -54,7 +54,6 @@
 	</div>
 
 	<div id = "widgetChart" style="border:1px solid;"></div>	
-	<div id ="lastRefresh"></div>
 	<div id="statusBar" style="display:none; width:100%; font-weight:bold;font-size:larger; ">Backend Call Status</div>
 	
 </body>

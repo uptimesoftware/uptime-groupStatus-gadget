@@ -5,16 +5,6 @@ $(function() {
 	$("#widgetSettings").hide();
 	$("#widgetChart").hide();
 
-	function showEditPanel() {
-		if (myChart) {
-			myChart.stopTimer();
-			myChart = null;
-		}
-		$("#widgetSettings").show();
-		$("#widgetChart").hide();
-		$("#lastRefresh").hide();
-	}
-
 	$("#saveSettings").click(function() {
 		var chartTypeId = $("#widgetOptions input[name=chartType]:radio:checked").val();
 		var groupId = $('#elementGroupId').find(":selected").val();
@@ -22,8 +12,6 @@ $(function() {
 		var statusTypeId = $("#widgetOptions input[name=statusType]:radio:checked").val();
 		var refreshInterval = $("#widgetOptions #refreshInterval").val();
 		var includeSubgroup = $("#widgetOptions #includeSubgroup").is(":checked");
-		// console.log("saveSettings includeSubgroup="+includeSubgroup);
-		// save group name for now, just for demo purposes
 		var settings = {
 			'groupId' : groupId,
 			'chartType' : chartTypeId,
@@ -41,13 +29,32 @@ $(function() {
 		$("#widgetSettings").hide();
 	});
 
+	uptimeGadget.registerOnEditHandler(showEditPanel);
+	uptimeGadget.registerOnLoadHandler(function() {
+		uptimeGadget.loadSettings().then(goodLoad, onBadAjax);
+	});
+	uptimeGadget.registerOnResizeHandler(resizeGadget);
+
+	function resizeGadget() {
+		$("#widgetSettings").height($(window).height() - 10);
+		$("#widgetChart").height($(window).height() - 10);
+	}
+
+	function showEditPanel() {
+		if (myChart) {
+			myChart.stopTimer();
+			myChart = null;
+		}
+		$("#widgetSettings").show();
+		$("#widgetChart").hide();
+	}
+
 	function displayPanel(settings) {
 		$("#widgetChart").show();
 		$("#widgetSettings").hide();
-		// console.log("displayPanel:
-		// includeSubgroup="+settings.includeSubgroup);
 		displayChart(settings.chartType, settings.groupId, settings.groupName, settings.statusType, settings.refreshInterval,
 				settings.includeSubgroup);
+		resizeGadget();
 	}
 
 	function groupSort(arg1, arg2) {
@@ -109,9 +116,6 @@ $(function() {
 	}
 
 	function displayChart(chartType, groupId, groupName, statusType, refreshInterval, includeSubgroup) {
-		// console.log("displayCharts: includeSubgroup="+includeSubgroup);
-		// stop any existing timers in the charts (for when we save and change
-		// settings)
 		if (myChart) {
 			myChart.stopTimer();
 			myChart = null;
@@ -124,7 +128,6 @@ $(function() {
 				entityGroupName : groupName,
 				statusType : statusType,
 				refreshInterval : refreshInterval,
-				refreshIntervalDivId : "lastRefresh",
 				statusBarDivId : "statusBar",
 				uptime_api : uptime_api,
 				includeSubgroup : includeSubgroup
@@ -136,7 +139,6 @@ $(function() {
 				entityGroupName : groupName,
 				statusType : statusType,
 				refreshInterval : refreshInterval,
-				refreshIntervalDivId : "lastRefresh",
 				statusBarDivId : "statusBar",
 				uptime_api : uptime_api,
 				includeSubgroup : includeSubgroup
@@ -144,9 +146,4 @@ $(function() {
 		}
 	}
 
-	uptimeGadget.registerOnEditHandler(showEditPanel);
-	uptimeGadget.registerOnLoadHandler(function() {
-		uptimeGadget.loadSettings().then(goodLoad, onBadAjax);
-	});
-	// uptimeGadget.registerOnUploadFile(function (e){});
 });
