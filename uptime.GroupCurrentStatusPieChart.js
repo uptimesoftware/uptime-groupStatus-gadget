@@ -104,7 +104,7 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 					cursor : 'pointer',
 					dataLabels : {
 						enabled : true,
-						distance : -1,
+						distance : 10,
 						style : {
 							width : '100px'
 						},
