@@ -14,10 +14,10 @@
 
 	<link rel="stylesheet" type="text/css" href="__UPTIME_GADGET_BASE__/groupStatus.css" />
 
+	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/apiQueries.js"></script>
 	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.GroupCurrentStatusBarChart.js"></script>
 	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.GroupCurrentStatusPieChart.js"></script>
 	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.Helper.js"></script>
-	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptimeApi.js"></script>
 	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/groupStatus.js"></script>
 </head>
 

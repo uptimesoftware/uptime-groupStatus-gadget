@@ -18,7 +18,7 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 		var chartTimer = null;
 		var statusBarDivId = null;
 		var includeSubgroup = true;
-		var uptime_api = null;
+		var api = new apiQueries();
 
 		if (typeof options == "object") {
 			chartDivId = options.chartDivId;
@@ -27,7 +27,6 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 			statusType = options.statusType;
 			refreshInterval = options.refreshInterval;
 			statusBarDivId = options.statusBarDivId;
-			uptime_api = options.uptime_api;
 			includeSubgroup = options.includeSubgroup;
 		}
 
@@ -57,23 +56,21 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 			data : [ 0 ],
 			color : '#AEAEAE'
 		} ];
-		var chart;
 
-		chart = new Highcharts.Chart({
+		var chart = new Highcharts.Chart({
 			chart : {
 				renderTo : chartDivId,
 				height : 200,
 				type : 'column',
-				events : {
-					load : requestData()
-				},
+				animation : true
 			},
 			credits : {
 				enabled : false
 			},
 			plotOptions : {
 				series : {
-					pointWidth : 20
+					pointWidth : 20,
+					animation : true
 				}
 			},
 			title : {
@@ -108,79 +105,21 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 		});
 
 		function requestData() {
-
-			var statusCount = {
-				'OK' : 0,
-				'WARN' : 0,
-				'CRIT' : 0,
-				'UNKNOWN' : 0,
-				'MAINT' : 0
-			};
-
+			chart.showLoading();
 			var reloadMs = refreshInterval * 60 * 1000;
 
-			if (includeSubgroup) {
-				uptime_api.getSubGroups(entityGroupId, function(subGroupId) {
-
-					uptime_api.getGroupStatus(subGroupId, function(groupStatus) {
-						if (statusType == "hostStatusType") {
-							chart.setTitle({
-								text : entityGroupName + " Hosts"
-							});
-
-							$.each(groupStatus.elementStatus, function(index, element) {
-								statusCount[element.status]++;
-							});
-						} else {
-							chart.setTitle({
-								text : entityGroupName + " Monitors"
-							});
-							$.each(groupStatus.monitorStatus, function(index, monitor) {
-
-								if ((monitor.isMonitored) && !(monitor.isHidden)) {
-									statusCount[monitor.status]++;
-								}
-							});
-						}
-
-						for ( var severity in statusCount) {
-							var bar = chart.get(severity);
-							if (statusCount.hasOwnProperty(severity)) {
-								bar.show();
-								bar.setData([ statusCount[severity] ]);
-							} else {
-								bar.hide();
-							}
-						}
-					}, function(jqXHR, textStatus, errorThrown) {
-						var statusBar = $(statusBarDivId);
-						statusBar.css("color", "red");
-						statusBar.text("Can't connect to the up.time API.");
-						statusBar.show();
-					});
+			if (statusType == "hostStatusType") {
+				chart.setTitle({
+					text : entityGroupName + " Elements"
+				});
+			} else {
+				// monitorStatusType
+				chart.setTitle({
+					text : entityGroupName + " Monitors"
 				});
 			}
-			uptime_api.getGroupStatus(entityGroupId, function(groupStatus) {
-				if (statusType == "hostStatusType") {
-					chart.setTitle({
-						text : entityGroupName + " Hosts"
-					});
 
-					$.each(groupStatus.elementStatus, function(index, element) {
-						statusCount[element.status]++;
-					});
-				} else {
-					chart.setTitle({
-						text : entityGroupName + " Monitors"
-					});
-					$.each(groupStatus.monitorStatus, function(index, monitor) {
-
-						if ((monitor.isMonitored) && !(monitor.isHidden)) {
-							statusCount[monitor.status]++;
-						}
-					});
-				}
-
+			api.getStatusCounts(entityGroupId, statusType, includeSubgroup).then(function(statusCount) {
 				for ( var severity in statusCount) {
 					var bar = chart.get(severity);
 					if (statusCount.hasOwnProperty(severity)) {
@@ -190,11 +129,14 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 						bar.hide();
 					}
 				}
-			}, function(jqXHR, textStatus, errorThrown) {
+				chart.hideLoading();
+			}).then(null, function(error) {
+				// FIXME
 				var statusBar = $(statusBarDivId);
 				statusBar.css("color", "red");
 				statusBar.text("Can't connect to the up.time API.");
 				statusBar.show();
+				chart.hideLoading();
 			});
 
 			chartTimer = setTimeout(requestData, reloadMs);
@@ -203,6 +145,7 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 
 		// public functions for this function/class
 		var publicFns = {
+			render : requestData,
 			stopTimer : function() {
 				if (chartTimer) {
 					window.clearInterval(chartTimer);

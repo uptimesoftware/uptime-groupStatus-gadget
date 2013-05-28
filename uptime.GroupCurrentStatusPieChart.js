@@ -18,38 +18,45 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 		var chartTimer = null;
 		var statusBarDivId = null;
 		var includeSubgroup = true;
-		var uptime_api = null;
+		var api = new apiQueries();
 
 		var seriesData = [ {
 			id : 'OK',
 			name : 'OK',
 			y : 0,
 			color : '#67B10B',
+			visible : false,
 			type : "pie"
 		}, {
 			id : 'WARN',
 			name : 'WARN',
 			y : 0,
 			color : '#DAD60B',
+			visible : false,
 			type : "pie"
 		}, {
 			id : 'CRIT',
 			name : 'CRIT',
 			y : 0,
 			color : '#B61211',
+			visible : false,
 			type : "pie"
 		}, {
 			id : 'MAINT',
 			name : 'MAINT',
 			y : 0,
 			color : '#555B98',
+			visible : false,
 			type : "pie"
 		}, {
 			id : 'UNKNOWN',
 			name : 'UNKNOWN',
-			y : 0,
-			color : '#AEAEAE'
+			y : 1,
+			color : '#AEAEAE',
+			visible : true,
+			type : "pie"
 		} ];
+
 		if (typeof options == "object") {
 			chartDivId = options.chartDivId;
 			entityGroupId = options.entityGroupId;
@@ -57,22 +64,17 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			statusType = options.statusType;
 			refreshInterval = options.refreshInterval;
 			statusBarDivId = options.statusBarDivId;
-			uptime_api = options.uptime_api;
 			includeSubgroup = options.includeSubgroup;
-
 		}
 
-		var chart;
-		chart = new Highcharts.Chart({
+		var dataLabelsEnabled = false;
+		var chart = new Highcharts.Chart({
 			chart : {
 				renderTo : chartDivId,
 				height : 200,
 				plotBackgroundColor : null,
 				plotBorderWidth : null,
 				plotShadow : false,
-				events : {
-					load : requestData
-				},
 				yAxis : {
 					allowDecimals : false
 				}
@@ -80,12 +82,10 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			credits : {
 				enabled : false
 			},
-
 			title : {
 				text : entityGroupName
 			},
 			tooltip : {
-
 				formatter : function() {
 					var plural = "";
 					if (this.y > 1) {
@@ -111,7 +111,11 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 						color : '#000000',
 						connectorColor : '#000000',
 						formatter : function() {
-							return '<b>' + this.point.name + '</b> (' + this.y + ") " + Math.floor(this.percentage) + ' %';
+							if (dataLabelsEnabled) {
+								return '<b>' + this.point.name + '</b> (' + this.y + ") " + Math.floor(this.percentage) + '%';
+							} else {
+								return '';
+							}
 						}
 					},
 					animation : true,
@@ -120,114 +124,56 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			},
 			series : [ {
 				type : 'pie',
-				name : 'Browser share',
+				name : 'Status',
 				data : seriesData
 			} ]
-
 		});
 
 		function requestData() {
-			var statusCount = {
-				'OK' : 0,
-				'WARN' : 0,
-				'CRIT' : 0,
-				'UNKNOWN' : 0,
-				'MAINT' : 0
-			};
+			chart.showLoading();
 			var reloadMs = refreshInterval * 60 * 1000;
 
-			if (includeSubgroup) {
-				uptime_api.getSubGroups(entityGroupId, function(subGroupId) {
-
-					uptime_api.getGroupStatus(subGroupId, function(groupStatus) {
-						if (statusType == "hostStatusType") {
-							chart.setTitle({
-								text : entityGroupName + " Hosts"
-							});
-							$.each(groupStatus.elementStatus, function(index, element) {
-								statusCount[element.status]++;
-							});
-						} else {
-							// monitorStatusType
-							chart.setTitle({
-								text : entityGroupName + " Monitors"
-							});
-							$.each(groupStatus.monitorStatus, function(index, monitor) {
-								if ((monitor.isMonitored) && !(monitor.isHidden)) {
-									statusCount[monitor.status]++;
-								}
-							});
-						}
-
-						$.each(seriesData, function(i, item) {
-							var sliceData = statusCount[item.id];
-							item.y = 0;
-							if (sliceData) {
-								console.log("if->item.y=" + item.y + " sliceData=" + sliceData);
-								item.y = sliceData;
-							} else {
-								console.log("else->item.y=" + item.y + " sliceData=" + sliceData);
-								item.visible = false;
-							}
-						});
-
-						chart.series[0].setData(seriesData, true);
-					}, function(jqXHR, textStatus, errorThrown) {
-						var statusBar = $(statusBarDivId);
-						statusBar.css("color", "red");
-						statusBar.text("Can't connect to the up.time API.");
-						statusBar.show();
-					});
-
+			if (statusType == "hostStatusType") {
+				chart.setTitle({
+					text : entityGroupName + " Elements"
+				});
+			} else {
+				// monitorStatusType
+				chart.setTitle({
+					text : entityGroupName + " Monitors"
 				});
 			}
 
-			uptime_api.getGroupStatus(entityGroupId, function(groupStatus) {
-
-				if (statusType == "hostStatusType") {
-					chart.setTitle({
-						text : entityGroupName + " Hosts"
-					});
-					$.each(groupStatus.elementStatus, function(index, element) {
-						statusCount[element.status]++;
-					});
-				} else {
-					// monitorStatusType
-					chart.setTitle({
-						text : entityGroupName + " Monitors"
-					});
-					$.each(groupStatus.monitorStatus, function(index, monitor) {
-
-						if ((monitor.isMonitored) && !(monitor.isHidden)) {
-							statusCount[monitor.status]++;
-						}
-					});
-				}
-
+			api.getStatusCounts(entityGroupId, statusType, includeSubgroup).then(function(statusCount) {
 				$.each(seriesData, function(i, item) {
 					var sliceData = statusCount[item.id];
 					item.y = 0;
 					if (sliceData) {
 						item.y = sliceData;
+						item.visible = true;
 					} else {
 						item.visible = false;
 					}
 				});
-
+				dataLabelsEnabled = true;
+				chart.xAxis[0].isDirty = true;
+				chart.redraw();
 				chart.series[0].setData(seriesData, true);
-
-			}, function(jqXHR, textStatus, errorThrown) {
+				chart.hideLoading();
+			}).then(null, function(error) {
+				// FIXME
 				var statusBar = $(statusBarDivId);
 				statusBar.css("color", "red");
 				statusBar.text("Can't connect to the up.time API.");
 				statusBar.show();
+				chart.hideLoading();
 			});
 
 			chartTimer = setTimeout(requestData, reloadMs);
-
 		}
 		// public functions for this function/class
 		var publicFns = {
+			render : requestData,
 			stopTimer : function() {
 				if (chartTimer) {
 					window.clearInterval(chartTimer);

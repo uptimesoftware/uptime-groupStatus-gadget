@@ -1,5 +1,5 @@
 $(function() {
-	var uptime_api = new uptimeApi();
+	var api = new apiQueries();
 	var myChart = null;
 
 	$("#widgetSettings").hide();
@@ -64,7 +64,7 @@ $(function() {
 	function goodLoad(settings) {
 		var statusBar = $("#statusBar");
 
-		uptime_api.getGroups("", function(groups) {
+		api.getAllGroups().then(function(groups) {
 			statusBar.css("color", "green");
 			statusBar.text("Loaded and READY!");
 			statusBar.show().fadeOut(2000);
@@ -88,7 +88,7 @@ $(function() {
 			} else {
 				showEditPanel();
 			}
-		}, function(jqXHR, textStatus, errorThrown) {
+		}, function(error) {
 			var statusBar = $(statusBarDivId);
 			statusBar.css("color", "red");
 			statusBar.text("Can't connect to the up.time API.");
@@ -129,7 +129,6 @@ $(function() {
 				statusType : statusType,
 				refreshInterval : refreshInterval,
 				statusBarDivId : "statusBar",
-				uptime_api : uptime_api,
 				includeSubgroup : includeSubgroup
 			});
 		} else {
@@ -140,10 +139,10 @@ $(function() {
 				statusType : statusType,
 				refreshInterval : refreshInterval,
 				statusBarDivId : "statusBar",
-				uptime_api : uptime_api,
 				includeSubgroup : includeSubgroup
 			});
 		}
+		myChart.render();
 	}
 
 });
