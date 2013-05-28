@@ -119,7 +119,16 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 						}
 					},
 					animation : true,
-					showInLegend : true
+					showInLegend : true,
+					point : {
+						events : {
+							legendItemClick : function() {
+								if (this.y <= 0) {
+									return false;
+								}
+							}
+						}
+					}
 				}
 			},
 			series : [ {
