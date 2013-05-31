@@ -40,6 +40,19 @@ $(function() {
 		$("#widgetChart").height($(window).height() - 10);
 	}
 
+	function displayStatusBar(error) {
+		var statusBar = $("#statusBar");
+		statusBar.empty();
+		var errorBox = uptimeErrorFormatter.getErrorBox(error, "Error Communicating with up.time");
+		errorBox.appendTo(statusBar);
+		statusBar.slideDown();
+	}
+
+	function clearStatusBar() {
+		var statusBar = $("#statusBar");
+		statusBar.slideUp().empty();
+	}
+
 	function showEditPanel() {
 		if (myChart) {
 			myChart.stopTimer();
@@ -62,12 +75,8 @@ $(function() {
 	}
 
 	function goodLoad(settings) {
-		var statusBar = $("#statusBar");
-
+		clearStatusBar();
 		api.getAllGroups().then(function(groups) {
-			statusBar.css("color", "green");
-			statusBar.text("Loaded and READY!");
-			statusBar.show().fadeOut(2000);
 			var optionsValues = '<select id="elementGroupId">';
 			groups.sort(groupSort);
 			$.each(groups, function(index, group) {
@@ -89,30 +98,18 @@ $(function() {
 				showEditPanel();
 			}
 		}, function(error) {
-			var statusBar = $(statusBarDivId);
-			statusBar.css("color", "red");
-			statusBar.text("Can't connect to the up.time API.");
-			statusBar.show();
+			displayStatusBar(error);
 		});
 
 	}
 
 	function onGoodSave(savedSettings) {
-		var statusBar = $("#statusBar");
-
-		statusBar.css("color", "green");
-		statusBar.text("Updated settings!");
-		statusBar.show().fadeOut(2000);
-
+		clearStatusBar();
 		displayPanel(savedSettings);
 	}
 
-	function onBadAjax(errorObject) {
-		var statusBar = $("#statusBar");
-		statusBar.css("color", "red");
-
-		statusBar.text(errorObject.code + ": " + errorObject.description);
-		statusBar.show().fadeOut(2000);
+	function onBadAjax(error) {
+		displayStatusBar(error);
 	}
 
 	function displayChart(chartType, groupId, groupName, statusType, refreshInterval, includeSubgroup) {

@@ -17,7 +17,6 @@
 	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/apiQueries.js"></script>
 	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.GroupCurrentStatusBarChart.js"></script>
 	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.GroupCurrentStatusPieChart.js"></script>
-	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.Helper.js"></script>
 	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/groupStatus.js"></script>
 </head>
 
@@ -53,8 +52,8 @@
 		</form>
 	</div>
 
-	<div id = "widgetChart" style="border:1px solid;"></div>	
-	<div id="statusBar" style="display:none; width:100%; font-weight:bold;font-size:larger; ">Backend Call Status</div>
+	<div id="widgetChart"></div>	
+	<div id="statusBar">Backend Call Status</div>
 	
 </body>
 </html>

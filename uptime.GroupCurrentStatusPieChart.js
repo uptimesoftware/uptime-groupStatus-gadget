@@ -139,7 +139,6 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 		});
 
 		function requestData() {
-			chart.showLoading();
 			var reloadMs = refreshInterval * 60 * 1000;
 
 			if (statusType == "hostStatusType") {
@@ -164,25 +163,31 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 						item.visible = false;
 					}
 				});
+				$('#' + statusBarDivId).slideUp().empty();
+				$('#' + chartDivId).fadeTo('slow', 1);
 				dataLabelsEnabled = true;
 				chart.xAxis[0].isDirty = true;
 				chart.redraw();
 				chart.series[0].setData(seriesData, true);
 				chart.hideLoading();
 			}).then(null, function(error) {
-				// FIXME
-				var statusBar = $(statusBarDivId);
-				statusBar.css("color", "red");
-				statusBar.text("Can't connect to the up.time API.");
-				statusBar.show();
 				chart.hideLoading();
+				$('#' + chartDivId).fadeTo('slow', 0.3);
+				var statusBar = $('#' + statusBarDivId);
+				var errorBox = uptimeErrorFormatter.getErrorBox(error, "Error Loading Chart Data");
+				statusBar.empty();
+				errorBox.appendTo(statusBar);
+				statusBar.slideDown();
 			});
 
 			chartTimer = setTimeout(requestData, reloadMs);
 		}
 		// public functions for this function/class
 		var publicFns = {
-			render : requestData,
+			render : function() {
+				chart.showLoading();
+				requestData();
+			},
 			stopTimer : function() {
 				if (chartTimer) {
 					window.clearInterval(chartTimer);
