@@ -36,8 +36,8 @@ $(function() {
 	uptimeGadget.registerOnResizeHandler(resizeGadget);
 
 	function resizeGadget() {
-		$("#widgetSettings").height($(window).height() - 10);
-		$("#widgetChart").height($(window).height() - 10);
+		$("#widgetSettings").height($(window).height());
+		$("#widgetChart").height($(window).height());
 	}
 
 	function displayStatusBar(error) {
@@ -60,6 +60,7 @@ $(function() {
 		}
 		$("#widgetSettings").show();
 		$("#widgetChart").hide();
+		resizeGadget();
 	}
 
 	function displayPanel(settings) {
