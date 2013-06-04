@@ -15,7 +15,6 @@ function apiQueries() {
 	function getGroupStatus(groupId) {
 		var deferred = UPTIME.pub.gadgets.promises.defer();
 		$.ajax("/api/v1/groups/" + groupId + "/status", {
-			// $.ajax("/api/v1/groups/100/status", {
 			cache : false
 		}).done(function(data, textStatus, jqXHR) {
 			deferred.resolve(data);

@@ -21,11 +21,6 @@ body {
 	overflow: auto !important;
 }
 
-/*
-#widgetSettings,#widgetChart {
-}
-*/
-
 #statusBar {
 	position: absolute;
 	top: 10px;
