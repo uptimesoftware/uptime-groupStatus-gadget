@@ -14,7 +14,7 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 		var entityGroupId = null;
 		var entityGroupName = null;
 		var statusType = null;
-		var refreshInterval = 1;
+		var refreshInterval = 30;
 		var chartTimer = null;
 		var statusBarDivId = null;
 		var includeSubgroup = true;
@@ -105,8 +105,6 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 		});
 
 		function requestData() {
-			var reloadMs = refreshInterval * 60 * 1000;
-
 			if (statusType == "hostStatusType") {
 				chart.setTitle({
 					text : entityGroupName + " Elements"
@@ -141,7 +139,9 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 				statusBar.slideDown();
 			});
 
-			chartTimer = setTimeout(requestData, reloadMs);
+			if (refreshInterval > 0) {
+				chartTimer = setTimeout(requestData, refreshInterval * 1000);
+			}
 
 		}
 
@@ -153,7 +153,7 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 			},
 			stopTimer : function() {
 				if (chartTimer) {
-					window.clearInterval(chartTimer);
+					window.clearTimeout(chartTimer);
 				}
 			}
 		};

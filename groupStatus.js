@@ -10,8 +10,8 @@ $(function() {
 		var groupId = $('#elementGroupId').find(":selected").val();
 		var groupName = $('#elementGroupId').find(":selected").text();
 		var statusTypeId = $("#widgetOptions input[name=statusType]:radio:checked").val();
-		var refreshInterval = $("#widgetOptions #refreshInterval").val();
-		var includeSubgroup = $("#widgetOptions #includeSubgroup").is(":checked");
+		var refreshInterval = $("#refreshRate").val();
+		var includeSubgroup = $("#includeSubgroup").is(":checked");
 		var settings = {
 			'groupId' : groupId,
 			'chartType' : chartTypeId,
@@ -91,7 +91,7 @@ $(function() {
 				$("#elementGroupId").val(settings.groupId);
 				$("#" + settings.chartType).prop("checked", true);
 				$("#" + settings.statusType).prop("checked", true);
-				$("#refreshInterval").val(settings.refreshInterval);
+				$("#refreshRate").val(settings.refreshInterval);
 				$("#includeSubgroup").val(settings.includeSubgroup);
 
 				displayPanel(settings);

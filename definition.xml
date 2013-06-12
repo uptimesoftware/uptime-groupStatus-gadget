@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <Module>
-	<ModulePrefs title="Group Status Panel" 
+	<ModulePrefs title="Group Status Chart" 
 		description="Graph group level element status"/> 
   <Content type="html">
 <![CDATA[ 
@@ -10,7 +10,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 	#includeResources(jquery,highcharts)
 	
-	<title>Group Status</title>
+	<title>Group Status Chart</title>
 
 	<link rel="stylesheet" type="text/css" href="__UPTIME_GADGET_BASE__/groupStatus.css" />
 
@@ -35,16 +35,16 @@
 			<input type="radio" checked id="monitorStatusType" name="statusType" value="monitorStatusType"> Monitor
 			<br/>
 			<br/>
-			Refresh Interval:
-			<select id="refreshInterval" value="1">
-				<option value="0">Off</option>
-				<option value="0.25">15 sec</option>
-				<option value="0.5">30 sec</option>
-				<option value="1">1 min</option>
-				<option value="2">2 min</option>
-				<option value="2">3 min</option>
-				<option value="5" selected>5 min</option>
-			</select>
+					<label for="refreshRate">Refresh Rate:</label>
+					<select id="refreshRate" class="group-status-setting" name="refreshRate">
+						<option value="30">30s</option>
+						<option value="60">1m</option>
+						<option value="300">5m</option>
+						<option value="600">10m</option>
+						<option value="900">15m</option>
+						<option value="3600">1h</option>
+						<option value="-1">Never</option>
+					</select>
 			<br/>
 			<br/>
 			<input id="saveSettings" type="button" value="Save">
