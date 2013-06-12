@@ -6,6 +6,19 @@ body {
 	overflow: auto !important;
 }
 
+#widgetChart {
+	padding-top: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+#widgetSettings {
+	border: 2px #BDBDBD solid;
+	border-radius: 5px;
+	padding: 10px;
+	background-color: #FDFDFD;
+}
+
 #statusBar {
 	position: absolute;
 	top: 10px;

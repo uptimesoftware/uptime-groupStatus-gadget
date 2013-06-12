@@ -8,7 +8,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-	#includeResources(jquery,highcharts)
+	#includeResources(jquery,jqueryui,highcharts)
 	
 	<title>Group Status Chart</title>
 
@@ -24,15 +24,19 @@
 	<div id="widgetSettings">
 		Select Element Group:
 		<form id="widgetOptions">
-			<div id = "availableGroups"></div>
-			<input type="checkbox" id="includeSubgroup" value"true" checked>Include Subgroup<br/>
+			<div id = "availableGroups">
+			<select id="elementGroupId" class="group-status-setting">
+				<option value="-1">Loading...</option>
+			</select>
+			</div>
+			<input type="checkbox" id="includeSubgroup" class="group-status-setting" value"true" checked></input>Include Subgroup<br/>
 			Chart Type:
-			<input type="radio" checked id="pieChartType" name="chartType" value="pieChartType"> Pie
-			<input type="radio" id="barChartType" name="chartType" value="barChartType"> Bar
+			<input type="radio" checked id="pieChartType" class="group-status-setting" name="chartType" value="pieChartType"></input> Pie
+			<input type="radio" id="barChartType" class="group-status-setting" name="chartType" value="barChartType"></input> Bar
 			<br/>
 			Status Type:
-			<input type="radio" id="hostStatusType" name="statusType" value="hostStatusType"> Host
-			<input type="radio" checked id="monitorStatusType" name="statusType" value="monitorStatusType"> Monitor
+			<input type="radio" id="hostStatusType" class="group-status-setting" name="statusType" value="hostStatusType"></input> Element
+			<input type="radio" checked id="monitorStatusType" class="group-status-setting" name="statusType" value="monitorStatusType"></input> Monitor
 			<br/>
 			<br/>
 					<label for="refreshRate">Refresh Rate:</label>
@@ -47,8 +51,7 @@
 					</select>
 			<br/>
 			<br/>
-			<input id="saveSettings" type="button" value="Save">
-			<input id="cancelSave" type="button" value="Cancel">
+			<input id="closeSettings" type="button" value="Close"></input>
 		</form>
 	</div>
 
