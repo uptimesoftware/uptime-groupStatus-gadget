@@ -158,7 +158,10 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 				if (chartTimer) {
 					window.clearTimeout(chartTimer);
 				}
-			} // TODO destroy
+			},
+			destroy : function() {
+				chart.destroy();
+			}
 		};
 		return publicFns; // Important: we need to return the public
 		// functions/methods

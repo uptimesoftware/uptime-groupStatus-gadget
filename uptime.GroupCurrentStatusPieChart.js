@@ -183,6 +183,9 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 				if (chartTimer) {
 					window.clearInterval(chartTimer);
 				}
+			},
+			destroy : function() {
+				chart.destroy();
 			}
 		};
 		return publicFns; // Important: we need to return the public

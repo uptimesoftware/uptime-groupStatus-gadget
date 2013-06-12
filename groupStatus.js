@@ -164,6 +164,7 @@ $(function() {
 	function displayChart(chartType, groupId, groupName, statusType, refreshInterval, includeSubgroup) {
 		if (myChart) {
 			myChart.stopTimer();
+			myChart.destroy();
 			myChart = null;
 		}
 
