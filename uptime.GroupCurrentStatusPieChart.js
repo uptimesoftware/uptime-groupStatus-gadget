@@ -83,7 +83,11 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 				enabled : false
 			},
 			title : {
-				text : entityGroupName
+				text : entityGroupName,
+				style : {
+					fontSize : '10px'
+				},
+				margin : 1
 			},
 			tooltip : {
 				formatter : function() {
@@ -97,6 +101,9 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 						return '<b>' + this.point.name + '</b> - ' + this.y + " monitor" + plural;
 					}
 				}
+			},
+			legend : {
+				enabled : false
 			},
 			plotOptions : {
 				pie : {
@@ -119,16 +126,6 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 						}
 					},
 					animation : true,
-					showInLegend : true,
-					point : {
-						events : {
-							legendItemClick : function() {
-								if (this.y <= 0) {
-									return false;
-								}
-							}
-						}
-					}
 				}
 			},
 			series : [ {

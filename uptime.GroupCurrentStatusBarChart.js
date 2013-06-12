@@ -101,18 +101,27 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 					}
 				}
 			},
+			legend : {
+				enabled : false
+			},
 			series : seriesData
 		});
 
 		function requestData() {
 			if (statusType == "hostStatusType") {
 				chart.setTitle({
-					text : entityGroupName + " Elements"
+					text : entityGroupName + " Elements",
+					style : {
+						fontSize : '10px'
+					}
 				});
 			} else {
 				// monitorStatusType
 				chart.setTitle({
-					text : entityGroupName + " Monitors"
+					text : entityGroupName + " Monitors",
+					style : {
+						fontSize : '10px'
+					}
 				});
 			}
 
