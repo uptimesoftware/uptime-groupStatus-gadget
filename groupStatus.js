@@ -176,7 +176,7 @@ $(function() {
 				refreshInterval : refreshInterval,
 				statusBarDivId : "statusBar",
 				includeSubgroup : includeSubgroup
-			});
+			}, displayStatusBar, clearStatusBar);
 		} else {
 			myChart = new UPTIME.GroupCurrentStatusBarChart({
 				chartDivId : "widgetChart",
@@ -186,7 +186,7 @@ $(function() {
 				refreshInterval : refreshInterval,
 				statusBarDivId : "statusBar",
 				includeSubgroup : includeSubgroup
-			});
+			}, displayStatusBar, clearStatusBar);
 		}
 		myChart.render();
 	}

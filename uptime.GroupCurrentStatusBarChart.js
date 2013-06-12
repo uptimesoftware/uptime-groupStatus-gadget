@@ -3,7 +3,7 @@ if (typeof UPTIME == "undefined") {
 }
 
 if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
-	UPTIME.GroupCurrentStatusBarChart = function(options) {
+	UPTIME.GroupCurrentStatusBarChart = function(options, displayStatusBar, clearStatusBar) {
 		Highcharts.setOptions({
 			global : {
 				useUTC : false
@@ -135,17 +135,11 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 						bar.hide();
 					}
 				}
-				$('#' + statusBarDivId).slideUp().empty();
-				$('#' + chartDivId).fadeTo('slow', 1);
+				clearStatusBar();
 				chart.hideLoading();
 			}).then(null, function(error) {
 				chart.hideLoading();
-				$('#' + chartDivId).fadeTo('slow', 0.3);
-				var statusBar = $('#' + statusBarDivId);
-				var errorBox = uptimeErrorFormatter.getErrorBox(error, "Error Loading Chart Data");
-				statusBar.empty();
-				errorBox.appendTo(statusBar);
-				statusBar.slideDown();
+				displayStatusBar(error, "Error Loading Chart Data");
 			});
 
 			if (refreshInterval > 0) {
@@ -164,7 +158,7 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 				if (chartTimer) {
 					window.clearTimeout(chartTimer);
 				}
-			}
+			} // TODO destroy
 		};
 		return publicFns; // Important: we need to return the public
 		// functions/methods

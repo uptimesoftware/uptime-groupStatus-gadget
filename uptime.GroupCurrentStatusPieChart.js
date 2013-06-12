@@ -3,7 +3,7 @@ if (typeof UPTIME == "undefined") {
 }
 
 if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
-	UPTIME.GroupCurrentStatusPieChart = function(options) {
+	UPTIME.GroupCurrentStatusPieChart = function(options, displayStatusBar, clearStatusBar) {
 		Highcharts.setOptions({
 			global : {
 				useUTC : false
@@ -160,8 +160,7 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 						item.visible = false;
 					}
 				});
-				$('#' + statusBarDivId).slideUp().empty();
-				$('#' + chartDivId).fadeTo('slow', 1);
+				clearStatusBar();
 				dataLabelsEnabled = true;
 				chart.xAxis[0].isDirty = true;
 				chart.redraw();
@@ -169,12 +168,7 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 				chart.hideLoading();
 			}).then(null, function(error) {
 				chart.hideLoading();
-				$('#' + chartDivId).fadeTo('slow', 0.3);
-				var statusBar = $('#' + statusBarDivId);
-				var errorBox = uptimeErrorFormatter.getErrorBox(error, "Error Loading Chart Data");
-				statusBar.empty();
-				errorBox.appendTo(statusBar);
-				statusBar.slideDown();
+				displayStatusBar(error, "Error Loading Chart Data");
 			});
 
 			chartTimer = setTimeout(requestData, reloadMs);
