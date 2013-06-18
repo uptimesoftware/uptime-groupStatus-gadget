@@ -11,18 +11,25 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 		});
 
 		var chartDivId = null;
-		var entityGroupId = null;
-		var entityGroupName = null;
+		var elementGroupId = null;
+		var elementGroupName = null;
 		var statusType = null;
 		var refreshInterval = 30;
 		var chartTimer = null;
 		var includeSubgroup = true;
 		var api = new apiQueries();
 
+		var textStyle = {
+			fontFamily : "Verdana, Arial, Helvetica, sans-serif",
+			fontSize : "9px",
+			lineHeight : "11px",
+			color : "#565E6C"
+		};
+
 		if (typeof options == "object") {
 			chartDivId = options.chartDivId;
-			entityGroupId = options.entityGroupId;
-			entityGroupName = options.entityGroupName;
+			elementGroupId = options.elementGroupId;
+			elementGroupName = options.elementGroupName;
 			statusType = options.statusType;
 			refreshInterval = options.refreshInterval;
 			includeSubgroup = options.includeSubgroup;
@@ -60,7 +67,8 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 				renderTo : chartDivId,
 				height : 200,
 				type : 'column',
-				animation : true
+				animation : true,
+				style : textStyle
 			},
 			credits : {
 				enabled : false
@@ -72,7 +80,19 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 				}
 			},
 			title : {
-				text : entityGroupName
+				text : '<a href="' + uptimeGadget.getGroupUrls(elementGroupId, elementGroupName).services + '" target="_top">'
+						+ elementGroupName + '</a>',
+				y : 5,
+				style : $.extend({
+					fontWeight : "bold"
+				}, textStyle),
+				useHTML : true
+			},
+			subtitle : {
+				text : statusType == "hostStatusType" ? "Element Status" : "Monitor Status",
+				y : 20,
+				style : textStyle,
+				useHTML : true
 			},
 			xAxis : {
 				labels : {
@@ -80,6 +100,9 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 				}
 			},
 			yAxis : {
+				labels : {
+					style : textStyle,
+				},
 				allowDecimals : false,
 				min : 0,
 				title : {
@@ -87,6 +110,7 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 				}
 			},
 			tooltip : {
+				style : textStyle,
 				formatter : function() {
 					var plural = "";
 					if (this.y > 1) {
@@ -102,28 +126,15 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 			legend : {
 				enabled : false
 			},
-			series : seriesData
+			series : seriesData,
+			spacingTop : 5,
+			spacingRight : 5,
+			spacingBottom : 5,
+			spacingLeft : 5
 		});
 
 		function requestData() {
-			if (statusType == "hostStatusType") {
-				chart.setTitle({
-					text : entityGroupName + " Elements",
-					style : {
-						fontSize : '10px'
-					}
-				});
-			} else {
-				// monitorStatusType
-				chart.setTitle({
-					text : entityGroupName + " Monitors",
-					style : {
-						fontSize : '10px'
-					}
-				});
-			}
-
-			api.getStatusCounts(entityGroupId, statusType, includeSubgroup).then(function(statusCount) {
+			api.getStatusCounts(elementGroupId, statusType, includeSubgroup).then(function(statusCount) {
 				for ( var severity in statusCount) {
 					var bar = chart.get(severity);
 					if (statusCount.hasOwnProperty(severity)) {
@@ -139,11 +150,9 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 				chart.hideLoading();
 				displayStatusBar(error, "Error Loading Chart Data");
 			});
-
 			if (refreshInterval > 0) {
 				chartTimer = setTimeout(requestData, refreshInterval * 1000);
 			}
-
 		}
 
 		// public functions for this function/class

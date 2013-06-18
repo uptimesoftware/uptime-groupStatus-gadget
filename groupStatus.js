@@ -171,8 +171,8 @@ $(function() {
 		if (chartType == "pieChartType") {
 			myChart = new UPTIME.GroupCurrentStatusPieChart({
 				chartDivId : "widgetChart",
-				entityGroupId : groupId,
-				entityGroupName : groupName,
+				elementGroupId : groupId,
+				elementGroupName : groupName,
 				statusType : statusType,
 				refreshInterval : refreshInterval,
 				includeSubgroup : includeSubgroup
@@ -180,8 +180,8 @@ $(function() {
 		} else {
 			myChart = new UPTIME.GroupCurrentStatusBarChart({
 				chartDivId : "widgetChart",
-				entityGroupId : groupId,
-				entityGroupName : groupName,
+				elementGroupId : groupId,
+				elementGroupName : groupName,
 				statusType : statusType,
 				refreshInterval : refreshInterval,
 				includeSubgroup : includeSubgroup

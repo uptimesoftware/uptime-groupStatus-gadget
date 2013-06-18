@@ -11,10 +11,10 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 		});
 
 		var chartDivId = null;
-		var entityGroupId = null;
-		var entityGroupName = null;
+		var elementGroupId = null;
+		var elementGroupName = null;
 		var statusType = null;
-		var refreshInterval = 1;
+		var refreshInterval = 30;
 		var chartTimer = null;
 		var includeSubgroup = true;
 		var api = new apiQueries();
@@ -56,10 +56,17 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			type : "pie"
 		} ];
 
+		var textStyle = {
+			fontFamily : "Verdana, Arial, Helvetica, sans-serif",
+			fontSize : "9px",
+			lineHeight : "11px",
+			color : "#565E6C"
+		};
+
 		if (typeof options == "object") {
 			chartDivId = options.chartDivId;
-			entityGroupId = options.entityGroupId;
-			entityGroupName = options.entityGroupName;
+			elementGroupId = options.elementGroupId;
+			elementGroupName = options.elementGroupName;
 			statusType = options.statusType;
 			refreshInterval = options.refreshInterval;
 			includeSubgroup = options.includeSubgroup;
@@ -75,19 +82,30 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 				plotShadow : false,
 				yAxis : {
 					allowDecimals : false
-				}
+				},
+				style : textStyle
 			},
 			credits : {
 				enabled : false
 			},
 			title : {
-				text : entityGroupName,
-				style : {
-					fontSize : '10px'
-				},
-				margin : 1
+				text : '<a href="' + uptimeGadget.getGroupUrls(elementGroupId, elementGroupName).services + '" target="_top">'
+						+ elementGroupName + '</a>',
+				margin : 0,
+				y : 5,
+				style : $.extend({
+					fontWeight : "bold"
+				}, textStyle),
+				useHTML : true
+			},
+			subtitle : {
+				text : statusType == "hostStatusType" ? "Element Status" : "Monitor Status",
+				y : 20,
+				style : textStyle,
+				useHTML : true
 			},
 			tooltip : {
+				style : textStyle,
 				formatter : function() {
 					var plural = "";
 					if (this.y > 1) {
@@ -110,11 +128,8 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 					dataLabels : {
 						enabled : true,
 						distance : 10,
-						style : {
-							width : '100px'
-						},
-						color : '#000000',
-						connectorColor : '#000000',
+						connectorColor : '#565E6C',
+						style : textStyle,
 						formatter : function() {
 							if (dataLabelsEnabled) {
 								return '<b>' + this.point.name + '</b> (' + this.y + ") " + Math.floor(this.percentage) + '%';
@@ -123,31 +138,22 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 							}
 						}
 					},
-					animation : true,
+					animation : true
 				}
 			},
 			series : [ {
 				type : 'pie',
 				name : 'Status',
 				data : seriesData
-			} ]
+			} ],
+			spacingTop : 5,
+			spacingRight : 5,
+			spacingBottom : 5,
+			spacingLeft : 5
 		});
 
 		function requestData() {
-			var reloadMs = refreshInterval * 60 * 1000;
-
-			if (statusType == "hostStatusType") {
-				chart.setTitle({
-					text : entityGroupName + " Elements"
-				});
-			} else {
-				// monitorStatusType
-				chart.setTitle({
-					text : entityGroupName + " Monitors"
-				});
-			}
-
-			api.getStatusCounts(entityGroupId, statusType, includeSubgroup).then(function(statusCount) {
+			api.getStatusCounts(elementGroupId, statusType, includeSubgroup).then(function(statusCount) {
 				$.each(seriesData, function(i, item) {
 					var sliceData = statusCount[item.id];
 					item.y = 0;
@@ -160,16 +166,15 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 				});
 				clearStatusBar();
 				dataLabelsEnabled = true;
-				chart.xAxis[0].isDirty = true;
-				chart.redraw();
 				chart.series[0].setData(seriesData, true);
 				chart.hideLoading();
 			}).then(null, function(error) {
 				chart.hideLoading();
 				displayStatusBar(error, "Error Loading Chart Data");
 			});
-
-			chartTimer = setTimeout(requestData, reloadMs);
+			if (refreshInterval > 0) {
+				chartTimer = setTimeout(requestData, refreshInterval * 1000);
+			}
 		}
 		// public functions for this function/class
 		var publicFns = {
@@ -179,7 +184,7 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			},
 			stopTimer : function() {
 				if (chartTimer) {
-					window.clearInterval(chartTimer);
+					window.clearTimeout(chartTimer);
 				}
 			},
 			destroy : function() {

@@ -6,6 +6,11 @@ body {
 	overflow: auto !important;
 }
 
+a {
+	text-decoration: inherit;
+	color: inherit;
+}
+
 #widgetChart {
 	padding-top: 2px;
 	padding-left: 2px;
