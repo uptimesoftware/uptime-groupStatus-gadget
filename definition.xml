@@ -9,7 +9,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-	#includeResources(jquery,jqueryui,highcharts)
+	#includeResources(jquery,highcharts)
 	
 	<title>Group Status Chart</title>
 
@@ -52,7 +52,7 @@
 					</select>
 			<br/>
 			<br/>
-			<input id="closeSettings" type="button" value="Close"></input>
+			<button id="closeSettings">Close</button>
 		</form>
 	</div>
 
