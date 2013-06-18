@@ -40,7 +40,7 @@ $(function() {
 	}
 	
 	function toMyChartDimensions(dimensions) {
-		return new UPTIME.pub.gadgets.Dimensions(Math.max(200, dimensions.width - 5), Math.max(200, dimensions.height - 5));
+		return new UPTIME.pub.gadgets.Dimensions(Math.max(100, dimensions.width - 5), Math.max(100, dimensions.height - 5));
 	}
 
 	function settingChanged() {

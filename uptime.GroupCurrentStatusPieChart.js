@@ -10,7 +10,7 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			}
 		});
 
-		var dimensions = new UPTIME.pub.gadgets.Dimensions(200, 200);
+		var dimensions = new UPTIME.pub.gadgets.Dimensions(100, 100);
 		var chartDivId = null;
 		var elementGroupId = null;
 		var elementGroupName = null;
