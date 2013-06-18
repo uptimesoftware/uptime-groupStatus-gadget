@@ -16,7 +16,6 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 		var statusType = null;
 		var refreshInterval = 1;
 		var chartTimer = null;
-		var statusBarDivId = null;
 		var includeSubgroup = true;
 		var api = new apiQueries();
 
@@ -63,7 +62,6 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			entityGroupName = options.entityGroupName;
 			statusType = options.statusType;
 			refreshInterval = options.refreshInterval;
-			statusBarDivId = options.statusBarDivId;
 			includeSubgroup = options.includeSubgroup;
 		}
 

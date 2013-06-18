@@ -175,7 +175,6 @@ $(function() {
 				entityGroupName : groupName,
 				statusType : statusType,
 				refreshInterval : refreshInterval,
-				statusBarDivId : "statusBar",
 				includeSubgroup : includeSubgroup
 			}, displayStatusBar, clearStatusBar);
 		} else {
@@ -185,7 +184,6 @@ $(function() {
 				entityGroupName : groupName,
 				statusType : statusType,
 				refreshInterval : refreshInterval,
-				statusBarDivId : "statusBar",
 				includeSubgroup : includeSubgroup
 			}, displayStatusBar, clearStatusBar);
 		}
