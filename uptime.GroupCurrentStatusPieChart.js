@@ -10,6 +10,7 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			}
 		});
 
+		var dimensions = new UPTIME.pub.gadgets.Dimensions(200, 200);
 		var chartDivId = null;
 		var elementGroupId = null;
 		var elementGroupName = null;
@@ -64,6 +65,7 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 		};
 
 		if (typeof options == "object") {
+			dimensions = options.dimensions;
 			chartDivId = options.chartDivId;
 			elementGroupId = options.elementGroupId;
 			elementGroupName = options.elementGroupName;
@@ -76,7 +78,8 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 		var chart = new Highcharts.Chart({
 			chart : {
 				renderTo : chartDivId,
-				height : 200,
+				width : dimensions.width,
+				height : dimensions.height,
 				plotBackgroundColor : null,
 				plotBorderWidth : null,
 				plotShadow : false,
@@ -181,6 +184,9 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			render : function() {
 				chart.showLoading();
 				requestData();
+			},
+			resize : function(newDimensions) {
+				chart.setSize(newDimensions.width, newDimensions.height);
 			},
 			stopTimer : function() {
 				if (chartTimer) {

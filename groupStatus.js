@@ -1,6 +1,7 @@
 $(function() {
 	var api = new apiQueries();
 	var myChart = null;
+	var myChartDimensions = null;
 	var groupStatusSettings = {
 		groupId : -1,
 		groupName : "",
@@ -20,13 +21,26 @@ $(function() {
 	});
 
 	uptimeGadget.registerOnEditHandler(showEditPanel);
-	uptimeGadget.registerOnLoadHandler(function() {
-		uptimeGadget.loadSettings().then(goodLoad, onBadAjax);
+	uptimeGadget.registerOnLoadHandler(function(onLoadData) {
+		myChartDimensions = toMyChartDimensions(onLoadData.dimensions);
+		if (onLoadData.hasPreloadedSettings()) {
+			goodLoad(onLoadData.settings);
+		} else {
+			uptimeGadget.loadSettings().then(goodLoad, onBadAjax);
+		}
 	});
 	uptimeGadget.registerOnResizeHandler(resizeGadget);
 
-	function resizeGadget() {
+	function resizeGadget(dimensions) {
+		myChartDimensions = toMyChartDimensions(dimensions);
+		if (myChart) {
+			myChart.resize(myChartDimensions);
+		}
 		$("body").height($(window).height());
+	}
+	
+	function toMyChartDimensions(dimensions) {
+		return new UPTIME.pub.gadgets.Dimensions(Math.max(200, dimensions.width - 5), Math.max(200, dimensions.height - 5));
 	}
 
 	function settingChanged() {
@@ -68,7 +82,7 @@ $(function() {
 		$("#includeSubgroup").prop("checked", groupStatusSettings.includeSubgroup);
 
 		$("#widgetSettings").slideDown();
-		resizeGadget();
+		$("body").height($(window).height());
 		return populateIdSelector().then(function() {
 			settingChanged();
 		});
@@ -88,7 +102,7 @@ $(function() {
 		$("#widgetChart").show();
 		displayChart(settings.chartTypeId, settings.groupId, settings.groupName, settings.statusTypeId, settings.refreshInterval,
 				settings.includeSubgroup);
-		resizeGadget();
+		$("body").height($(window).height());
 	}
 
 	function groupSort(arg1, arg2) {
@@ -170,6 +184,7 @@ $(function() {
 
 		if (chartType == "pieChartType") {
 			myChart = new UPTIME.GroupCurrentStatusPieChart({
+				dimensions : myChartDimensions,
 				chartDivId : "widgetChart",
 				elementGroupId : groupId,
 				elementGroupName : groupName,
@@ -179,6 +194,7 @@ $(function() {
 			}, displayStatusBar, clearStatusBar);
 		} else {
 			myChart = new UPTIME.GroupCurrentStatusBarChart({
+				dimensions : myChartDimensions,
 				chartDivId : "widgetChart",
 				elementGroupId : groupId,
 				elementGroupName : groupName,
