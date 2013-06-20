@@ -101,6 +101,7 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			},
 			title : {
 				text : '&nbsp;',
+				margin : 0,
 				y : 5,
 				style : $.extend({
 					fontWeight : "bold"
@@ -150,9 +151,6 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 		function requestData() {
 			api.getStatusCounts(elementGroupId, statusType, includeSubgroup).then(
 					function(result) {
-						if (!result.groupId || !result.groupName) {
-						alert("!?");
-						}
 						chart.setTitle({
 							text : '<a href="' + uptimeGadget.getGroupUrls(result.groupId, result.groupName).services
 									+ '" target="_top">' + escapeHtml(result.groupName)

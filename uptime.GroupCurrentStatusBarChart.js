@@ -140,15 +140,15 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 						}, {
 							text : objectCount(statusType, result.total),
 						});
-						for ( var severity in result.statusCount) {
-							var bar = chart.get(severity);
-							if (result.statusCount.hasOwnProperty(severity)) {
+						$.each(result.statusCount, function(status, count) {
+							var bar = chart.get(status);
+							bar.setData([ count ]);
+							if (count > 0) {
 								bar.show();
-								bar.setData([ result.statusCount[severity] ]);
 							} else {
 								bar.hide();
 							}
-						}
+						});
 						clearStatusBar();
 						dataLabelsEnabled = true;
 						chart.hideLoading();
