@@ -30,7 +30,7 @@
 				<option value="-1">Loading...</option>
 			</select>
 			</div>
-			<input type="checkbox" id="includeSubgroup" class="group-status-setting" value"true" checked></input>Include Subgroup<br/>
+			<input type="checkbox" id="includeSubgroup" class="group-status-setting" value"true" checked></input>Include Subgroups<br/>
 			Chart Type:
 			<input type="radio" checked id="pieChartType" class="group-status-setting" name="chartType" value="pieChartType"></input> Pie
 			<input type="radio" id="barChartType" class="group-status-setting" name="chartType" value="barChartType"></input> Bar
