@@ -65,7 +65,7 @@ function apiQueries() {
 				if (groups.length == 0) {
 					deferred.reject("Group not found.");
 				} else {
-					deferred.resolve();
+					deferred.resolve(groups);
 				}
 			}
 		}).fail(function(jqXHR, textStatus, errorThrown) {
@@ -106,6 +106,7 @@ function apiQueries() {
 		};
 
 		var groupsPromise = null;
+		var groupStatuses = [];
 		if (includeSubgroup) {
 			groupsPromise = getGroupWithSubGroups(entityGroupId);
 		} else {
@@ -115,7 +116,7 @@ function apiQueries() {
 			if (!$.isArray(groups)) {
 				groups = [ groups ];
 			}
-			var groupStatuses = [];
+			console.dir(groups);
 			result.groupName = groups[0].name;
 			result.hasSubgroups = groups.length > 1;
 			$.each(groups, function(i, group) {
@@ -132,9 +133,8 @@ function apiQueries() {
 						}
 					});
 				} else {
-					// monitorStatusType
 					$.each(groupStatus.monitorStatus, function(index, monitor) {
-						if ((monitor.isMonitored) && !(monitor.isHidden)) {
+						if (monitor.isMonitored && !monitor.isHidden) {
 							result.statusCount[monitor.status]++;
 							result.total++;
 						}
@@ -142,8 +142,6 @@ function apiQueries() {
 				}
 			});
 			return result;
-		}).then(null, function() {
-			return new UPTIME.pub.gadgets.promises.reject("Group not found");
 		});
 	};
 
