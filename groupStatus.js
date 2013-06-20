@@ -38,7 +38,7 @@ $(function() {
 		}
 		$("body").height($(window).height());
 	}
-	
+
 	function toMyChartDimensions(dimensions) {
 		return new UPTIME.pub.gadgets.Dimensions(Math.max(100, dimensions.width - 5), Math.max(100, dimensions.height - 5));
 	}
@@ -82,7 +82,11 @@ $(function() {
 		$("#widgetSettings").slideDown();
 		$("body").height($(window).height());
 		return populateIdSelector().then(function() {
-			settingChanged();
+			if (!myChart) {
+				settingChanged();
+			}
+		}, function(error) {
+			displayStatusBar(error, "Error Loading the List of Groups from up.time Controller");
 		});
 	}
 
@@ -94,13 +98,6 @@ $(function() {
 	function enableSettings() {
 		$('.group-status-setting').prop('disabled', false);
 		$('#closeButton').prop('disabled', false).removeClass("ui-state-disabled");
-	}
-
-	function displayPanel(settings) {
-		$("#widgetChart").show();
-		displayChart(settings.chartTypeId, settings.groupId, settings.groupName, settings.statusTypeId, settings.refreshInterval,
-				settings.includeSubgroup);
-		$("body").height($(window).height());
 	}
 
 	function groupSort(arg1, arg2) {
@@ -122,33 +119,28 @@ $(function() {
 			if (groupStatusSettings.groupId >= 0) {
 				groupSelector.val(groupStatusSettings.groupId);
 			}
-		}, function(error) {
-			displayStatusBar(error, "Error Loading the List of Groups from up.time Controller");
 		});
 	}
 
 	function goodLoad(settings) {
 		clearStatusBar();
 		if (settings) {
-			// update hidden edit panel with settings
 			$("#elementGroupId").val(settings.groupId);
 			$("#" + settings.chartTypeId).prop("checked", true);
 			$("#" + settings.statusTypeId).prop("checked", true);
 			$("#refreshRate").val(settings.refreshInterval);
 			$("#includeSubgroup").val(settings.includeSubgroup);
 			$.extend(groupStatusSettings, settings);
-
-			displayPanel(settings);
-		} else {
+			displayChart();
+		} else if (uptimeGadget.isOwner()) {
 			$('#widgetChart').hide();
 			showEditPanel();
 		}
-
 	}
 
-	function onGoodSave(savedSettings) {
+	function onGoodSave() {
 		clearStatusBar();
-		displayPanel(savedSettings);
+		displayChart();
 	}
 
 	function onBadAjax(error) {
@@ -173,35 +165,37 @@ $(function() {
 		});
 	}
 
-	function displayChart(chartType, groupId, groupName, statusType, refreshInterval, includeSubgroup) {
+	function displayChart() {
 		if (myChart) {
 			myChart.stopTimer();
 			myChart.destroy();
 			myChart = null;
 		}
+		$("#widgetChart").show();
 
-		if (chartType == "pieChartType") {
+		if (groupStatusSettings.chartTypeId == "pieChartType") {
 			myChart = new UPTIME.GroupCurrentStatusPieChart({
 				dimensions : myChartDimensions,
 				chartDivId : "widgetChart",
-				elementGroupId : groupId,
-				elementGroupName : groupName,
-				statusType : statusType,
-				refreshInterval : refreshInterval,
-				includeSubgroup : includeSubgroup
+				elementGroupId : groupStatusSettings.groupId,
+				elementGroupName : groupStatusSettings.groupName,
+				statusType : groupStatusSettings.statusType,
+				refreshInterval : groupStatusSettings.refreshInterval,
+				includeSubgroup : groupStatusSettings.includeSubgroup
 			}, displayStatusBar, clearStatusBar);
 		} else {
 			myChart = new UPTIME.GroupCurrentStatusBarChart({
 				dimensions : myChartDimensions,
 				chartDivId : "widgetChart",
-				elementGroupId : groupId,
-				elementGroupName : groupName,
-				statusType : statusType,
-				refreshInterval : refreshInterval,
-				includeSubgroup : includeSubgroup
+				elementGroupId : groupStatusSettings.groupId,
+				elementGroupName : groupStatusSettings.groupName,
+				statusType : groupStatusSettings.statusType,
+				refreshInterval : groupStatusSettings.refreshInterval,
+				includeSubgroup : groupStatusSettings.includeSubgroup
 			}, displayStatusBar, clearStatusBar);
 		}
 		myChart.render();
+		$("body").height($(window).height());
 	}
 
 });

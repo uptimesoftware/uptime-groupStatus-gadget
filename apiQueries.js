@@ -58,7 +58,16 @@ function apiQueries() {
 		$.ajax("/api/v1/groups", {
 			cache : false
 		}).done(function(data, textStatus, jqXHR) {
-			deferred.resolve(findGroups(groupId, data));
+			if (data.length == 0) {
+				deferred.reject("No groups not found.");
+			} else {
+				var groups = findGroups(groupId, data);
+				if (groups.length == 0) {
+					deferred.reject("Group not found.");
+				} else {
+					deferred.resolve();
+				}
+			}
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			deferred.reject(UPTIME.pub.errors.toDisplayableJQueryAjaxError(jqXHR, textStatus, errorThrown, this));
 		});
@@ -70,7 +79,11 @@ function apiQueries() {
 		$.ajax("/api/v1/groups", {
 			cache : false
 		}).done(function(data, textStatus, jqXHR) {
-			deferred.resolve(data);
+			if (data.length == 0) {
+				deferred.reject("No groups not found.");
+			} else {
+				deferred.resolve(data);
+			}
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			deferred.reject(UPTIME.pub.errors.toDisplayableJQueryAjaxError(jqXHR, textStatus, errorThrown, this));
 		});
