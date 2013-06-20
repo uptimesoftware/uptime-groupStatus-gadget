@@ -4,7 +4,6 @@ $(function() {
 	var myChartDimensions = null;
 	var groupStatusSettings = {
 		groupId : -1,
-		groupName : "",
 		statusTypeId : "hostStatusType",
 		refreshInterval : 30,
 		includeSubgroup : true,
@@ -30,6 +29,19 @@ $(function() {
 		}
 	});
 	uptimeGadget.registerOnResizeHandler(resizeGadget);
+
+	escapeHtml = function(str) {
+		return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+	};
+
+	objectCount = function(statusType, count) {
+		if (count == 0) {
+			return statusType == "hostStatusType" ? "No elements" : "No monitors";
+		} else if (count == 1) {
+			return statusType == "hostStatusType" ? "1 element" : "1 monitor";
+		}
+		return count + (statusType == "hostStatusType" ? " elements" : " monitors");
+	};
 
 	function resizeGadget(dimensions) {
 		myChartDimensions = toMyChartDimensions(dimensions);
@@ -178,8 +190,7 @@ $(function() {
 				dimensions : myChartDimensions,
 				chartDivId : "widgetChart",
 				elementGroupId : groupStatusSettings.groupId,
-				elementGroupName : groupStatusSettings.groupName,
-				statusType : groupStatusSettings.statusType,
+				statusType : groupStatusSettings.statusTypeId,
 				refreshInterval : groupStatusSettings.refreshInterval,
 				includeSubgroup : groupStatusSettings.includeSubgroup
 			}, displayStatusBar, clearStatusBar);
@@ -188,8 +199,7 @@ $(function() {
 				dimensions : myChartDimensions,
 				chartDivId : "widgetChart",
 				elementGroupId : groupStatusSettings.groupId,
-				elementGroupName : groupStatusSettings.groupName,
-				statusType : groupStatusSettings.statusType,
+				statusType : groupStatusSettings.statusTypeId,
 				refreshInterval : groupStatusSettings.refreshInterval,
 				includeSubgroup : groupStatusSettings.includeSubgroup
 			}, displayStatusBar, clearStatusBar);

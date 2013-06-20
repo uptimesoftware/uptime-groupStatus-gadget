@@ -13,7 +13,6 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 		var dimensions = new UPTIME.pub.gadgets.Dimensions(100, 100);
 		var chartDivId = null;
 		var elementGroupId = null;
-		var elementGroupName = null;
 		var statusType = null;
 		var refreshInterval = 30;
 		var chartTimer = null;
@@ -68,7 +67,6 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			dimensions = options.dimensions;
 			chartDivId = options.chartDivId;
 			elementGroupId = options.elementGroupId;
-			elementGroupName = options.elementGroupName;
 			statusType = options.statusType;
 			refreshInterval = options.refreshInterval;
 			includeSubgroup = options.includeSubgroup;
@@ -91,10 +89,18 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 			credits : {
 				enabled : false
 			},
+			tooltip : {
+				style : textStyle,
+				formatter : function() {
+					if (dataLabelsEnabled) {
+						return '<b>' + this.point.name + '</b> - ' + objectCount(statusType, this.y);
+					} else {
+						return '';
+					}
+				}
+			},
 			title : {
-				text : '<a href="' + uptimeGadget.getGroupUrls(elementGroupId, elementGroupName).services + '" target="_top">'
-						+ elementGroupName + '</a>',
-				margin : 0,
+				text : '&nbsp;',
 				y : 5,
 				style : $.extend({
 					fontWeight : "bold"
@@ -102,24 +108,10 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 				useHTML : true
 			},
 			subtitle : {
-				text : statusType == "hostStatusType" ? "Element Status" : "Monitor Status",
+				text : '&nbsp;',
 				y : 20,
 				style : textStyle,
 				useHTML : true
-			},
-			tooltip : {
-				style : textStyle,
-				formatter : function() {
-					var plural = "";
-					if (this.y > 1) {
-						plural = "s";
-					}
-					if (statusType == "hostStatusType") {
-						return '<b>' + this.point.name + '</b> - ' + this.y + " element" + plural;
-					} else {
-						return '<b>' + this.point.name + '</b> - ' + this.y + " monitor" + plural;
-					}
-				}
 			},
 			legend : {
 				enabled : false
@@ -156,22 +148,33 @@ if (typeof UPTIME.GroupCurrentStatusPieChart == "undefined") {
 		});
 
 		function requestData() {
-			api.getStatusCounts(elementGroupId, statusType, includeSubgroup).then(function(statusCount) {
-				$.each(seriesData, function(i, item) {
-					var sliceData = statusCount[item.id];
-					item.y = 0;
-					if (sliceData) {
-						item.y = sliceData;
-						item.visible = true;
-					} else {
-						item.visible = false;
-					}
-				});
-				clearStatusBar();
-				dataLabelsEnabled = true;
-				chart.series[0].setData(seriesData, true);
-				chart.hideLoading();
-			}).then(null, function(error) {
+			api.getStatusCounts(elementGroupId, statusType, includeSubgroup).then(
+					function(result) {
+						if (!result.groupId || !result.groupName) {
+						alert("!?");
+						}
+						chart.setTitle({
+							text : '<a href="' + uptimeGadget.getGroupUrls(result.groupId, result.groupName).services
+									+ '" target="_top">' + escapeHtml(result.groupName)
+									+ (result.hasSubgroups ? " and subgroups" : "") + '</a>',
+						}, {
+							text : objectCount(statusType, result.total),
+						});
+						$.each(seriesData, function(i, item) {
+							var sliceData = result.statusCount[item.id];
+							item.y = 0;
+							if (sliceData) {
+								item.y = sliceData;
+								item.visible = true;
+							} else {
+								item.visible = false;
+							}
+						});
+						clearStatusBar();
+						dataLabelsEnabled = true;
+						chart.series[0].setData(seriesData, true);
+						chart.hideLoading();
+					}).then(null, function(error) {
 				chart.hideLoading();
 				displayStatusBar(error, "Error Loading Chart Data");
 			});

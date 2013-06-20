@@ -13,7 +13,6 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 		var dimensions = new UPTIME.pub.gadgets.Dimensions(100, 100);
 		var chartDivId = null;
 		var elementGroupId = null;
-		var elementGroupName = null;
 		var statusType = null;
 		var refreshInterval = 30;
 		var chartTimer = null;
@@ -31,7 +30,6 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 			dimensions = options.dimensions;
 			chartDivId = options.chartDivId;
 			elementGroupId = options.elementGroupId;
-			elementGroupName = options.elementGroupName;
 			statusType = options.statusType;
 			refreshInterval = options.refreshInterval;
 			includeSubgroup = options.includeSubgroup;
@@ -64,6 +62,7 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 			color : '#AEAEAE'
 		} ];
 
+		var dataLabelsEnabled = false;
 		var chart = new Highcharts.Chart({
 			chart : {
 				renderTo : chartDivId,
@@ -83,8 +82,7 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 				}
 			},
 			title : {
-				text : '<a href="' + uptimeGadget.getGroupUrls(elementGroupId, elementGroupName).services + '" target="_top">'
-						+ elementGroupName + '</a>',
+				text : '&nbsp;',
 				y : 5,
 				style : $.extend({
 					fontWeight : "bold"
@@ -92,7 +90,7 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 				useHTML : true
 			},
 			subtitle : {
-				text : statusType == "hostStatusType" ? "Element Status" : "Monitor Status",
+				text : '&nbsp;',
 				y : 20,
 				style : textStyle,
 				useHTML : true
@@ -115,14 +113,10 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 			tooltip : {
 				style : textStyle,
 				formatter : function() {
-					var plural = "";
-					if (this.y > 1) {
-						plural = "s";
-					}
-					if (statusType == "hostStatusType") {
-						return '<b>' + this.series.name + '</b> - ' + this.y + " element" + plural;
+					if (dataLabelsEnabled) {
+						return '<b>' + this.series.name + '</b> - ' + objectCount(statusType, this.y);
 					} else {
-						return '<b>' + this.series.name + '</b> - ' + this.y + " monitor" + plural;
+						return '';
 					}
 				}
 			},
@@ -137,19 +131,28 @@ if (typeof UPTIME.GroupCurrentStatusBarChart == "undefined") {
 		});
 
 		function requestData() {
-			api.getStatusCounts(elementGroupId, statusType, includeSubgroup).then(function(statusCount) {
-				for ( var severity in statusCount) {
-					var bar = chart.get(severity);
-					if (statusCount.hasOwnProperty(severity)) {
-						bar.show();
-						bar.setData([ statusCount[severity] ]);
-					} else {
-						bar.hide();
-					}
-				}
-				clearStatusBar();
-				chart.hideLoading();
-			}).then(null, function(error) {
+			api.getStatusCounts(elementGroupId, statusType, includeSubgroup).then(
+					function(result) {
+						chart.setTitle({
+							text : '<a href="' + uptimeGadget.getGroupUrls(result.groupId, result.groupName).services
+									+ '" target="_top">' + escapeHtml(result.groupName)
+									+ (result.hasSubgroups ? " and subgroups" : "") + '</a>',
+						}, {
+							text : objectCount(statusType, result.total),
+						});
+						for ( var severity in result.statusCount) {
+							var bar = chart.get(severity);
+							if (result.statusCount.hasOwnProperty(severity)) {
+								bar.show();
+								bar.setData([ result.statusCount[severity] ]);
+							} else {
+								bar.hide();
+							}
+						}
+						clearStatusBar();
+						dataLabelsEnabled = true;
+						chart.hideLoading();
+					}).then(null, function(error) {
 				chart.hideLoading();
 				displayStatusBar(error, "Error Loading Chart Data");
 			});

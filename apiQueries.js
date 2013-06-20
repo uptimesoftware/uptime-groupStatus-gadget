@@ -59,7 +59,7 @@ function apiQueries() {
 			cache : false
 		}).done(function(data, textStatus, jqXHR) {
 			if (data.length == 0) {
-				deferred.reject("No groups not found.");
+				deferred.reject("No groups found.");
 			} else {
 				var groups = findGroups(groupId, data);
 				if (groups.length == 0) {
@@ -80,7 +80,7 @@ function apiQueries() {
 			cache : false
 		}).done(function(data, textStatus, jqXHR) {
 			if (data.length == 0) {
-				deferred.reject("No groups not found.");
+				deferred.reject("No groups found.");
 			} else {
 				deferred.resolve(data);
 			}
@@ -91,12 +91,18 @@ function apiQueries() {
 	};
 
 	this.getStatusCounts = function(entityGroupId, statusType, includeSubgroup) {
-		var statusCount = {
-			'OK' : 0,
-			'WARN' : 0,
-			'CRIT' : 0,
-			'UNKNOWN' : 0,
-			'MAINT' : 0
+		var result = {
+			groupId : entityGroupId,
+			groupName : undefined,
+			hasSubgroups : undefined,
+			total : 0,
+			statusCount : {
+				'OK' : 0,
+				'WARN' : 0,
+				'CRIT' : 0,
+				'UNKNOWN' : 0,
+				'MAINT' : 0
+			}
 		};
 
 		var groupsPromise = null;
@@ -110,6 +116,8 @@ function apiQueries() {
 				groups = [ groups ];
 			}
 			var groupStatuses = [];
+			result.groupName = groups[0].name;
+			result.hasSubgroups = groups.length > 1;
 			$.each(groups, function(i, group) {
 				groupStatuses.push(getGroupStatus(group.id));
 			});
@@ -119,19 +127,23 @@ function apiQueries() {
 				if (statusType == "hostStatusType") {
 					$.each(groupStatus.elementStatus, function(index, element) {
 						if (element.isMonitored) {
-							statusCount[element.status]++;
+							result.statusCount[element.status]++;
+							result.total++;
 						}
 					});
 				} else {
 					// monitorStatusType
 					$.each(groupStatus.monitorStatus, function(index, monitor) {
 						if ((monitor.isMonitored) && !(monitor.isHidden)) {
-							statusCount[monitor.status]++;
+							result.statusCount[monitor.status]++;
+							result.total++;
 						}
 					});
 				}
 			});
-			return statusCount;
+			return result;
+		}).then(null, function() {
+			return new UPTIME.pub.gadgets.promises.reject("Group not found");
 		});
 	};
 
