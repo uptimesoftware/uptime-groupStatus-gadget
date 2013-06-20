@@ -44,10 +44,8 @@ $(function() {
 	}
 
 	function settingChanged() {
-		var cType = $("#widgetOptions input[name=chartType]:radio:checked");
-		groupStatusSettings.chartTypeId = cType.val();
+		groupStatusSettings.chartTypeId = $("#widgetOptions input[name=chartType]:radio:checked").val();
 		groupStatusSettings.groupId = $('#elementGroupId').find(":selected").val();
-		groupStatusSettings.groupName = $('#elementGroupId').find(":selected").text();
 		groupStatusSettings.statusTypeId = $("#widgetOptions input[name=statusType]:radio:checked").val();
 		groupStatusSettings.refreshInterval = $("#refreshRate").val();
 		groupStatusSettings.includeSubgroup = $("#includeSubgroup").is(":checked");
