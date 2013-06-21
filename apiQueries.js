@@ -116,7 +116,6 @@ function apiQueries() {
 			if (!$.isArray(groups)) {
 				groups = [ groups ];
 			}
-			console.dir(groups);
 			result.groupName = groups[0].name;
 			result.hasSubgroups = groups.length > 1;
 			$.each(groups, function(i, group) {
