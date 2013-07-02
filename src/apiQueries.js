@@ -12,9 +12,28 @@ function apiQueries() {
 		return deferred.promise;
 	}
 
-	function getGroupStatus(groupId) {
+	function createGroupFilter(groupIds) {
 		var deferred = UPTIME.pub.gadgets.promises.defer();
-		$.ajax("/api/v1/groups/" + groupId + "/status", {
+		$.ajax("/api/v1/groups/filter", {
+			cache : false,
+			type : 'Post',
+			contentType : 'application/json',
+			data : JSON.stringify({
+				ids : groupIds
+			}),
+			processData : false,
+			dataType : 'json'
+		}).done(function(data, textStatus, jqXHR) {
+			deferred.resolve(data.id);
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			deferred.reject(UPTIME.pub.errors.toDisplayableJQueryAjaxError(jqXHR, textStatus, errorThrown, this));
+		});
+		return deferred.promise;
+	}
+
+	function getGroupStatuses(filterId) {
+		var deferred = UPTIME.pub.gadgets.promises.defer();
+		$.ajax("/api/v1/groups/filter/" + filterId + "/status", {
 			cache : false
 		}).done(function(data, textStatus, jqXHR) {
 			deferred.resolve(data);
@@ -116,12 +135,12 @@ function apiQueries() {
 			if (!$.isArray(groups)) {
 				groups = [ groups ];
 			}
+			var groupIds = $.map(groups, function(group) {
+				return group.id;
+			});
 			result.groupName = groups[0].name;
 			result.hasSubgroups = groups.length > 1;
-			$.each(groups, function(i, group) {
-				groupStatuses.push(getGroupStatus(group.id));
-			});
-			return UPTIME.pub.gadgets.promises.all(groupStatuses);
+			return createGroupFilter(groupIds).then(getGroupStatuses);
 		}).then(function(groupStatuses) {
 			$.each(groupStatuses, function(i, groupStatus) {
 				if (statusType == "hostStatusType") {
