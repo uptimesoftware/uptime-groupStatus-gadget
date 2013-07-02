@@ -125,11 +125,17 @@ $(function() {
 			// fill in element drop down list
 			groups.sort(groupSort);
 			var groupSelector = $('#elementGroupId').empty();
+			var hasMyInfrastructure = false;
 			$.each(groups, function() {
 				groupSelector.append($("<option />").val(this.id).text(this.name));
+				if (this.id == 1) {
+					hasMyInfrastructure = true;
+				}
 			});
 			if (groupStatusSettings.groupId >= 0) {
 				groupSelector.val(groupStatusSettings.groupId);
+			} else if (hasMyInfrastructure) {
+				groupSelector.val(1);
 			}
 		});
 	}
