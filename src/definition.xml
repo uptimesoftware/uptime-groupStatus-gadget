@@ -30,14 +30,14 @@
 				<option value="-1">Loading...</option>
 			</select>
 			</div>
-			<input type="checkbox" id="includeSubgroup" class="group-status-setting" value"true" checked></input>Include Subgroups<br/>
+			<input type="checkbox" id="includeSubgroup" class="group-status-setting" value"true" checked>Include Subgroups<br/>
 			Chart Type:
-			<input type="radio" checked id="pieChartType" class="group-status-setting" name="chartType" value="pieChartType"></input> Pie
-			<input type="radio" id="barChartType" class="group-status-setting" name="chartType" value="barChartType"></input> Bar
+			<input type="radio" checked id="pieChartType" class="group-status-setting" name="chartType" value="pieChartType"> Pie
+			<input type="radio" id="barChartType" class="group-status-setting" name="chartType" value="barChartType"> Bar
 			<br/>
 			Status Type:
-			<input type="radio" id="hostStatusType" class="group-status-setting" name="statusType" value="hostStatusType"></input> Element
-			<input type="radio" checked id="monitorStatusType" class="group-status-setting" name="statusType" value="monitorStatusType"></input> Monitor
+			<input type="radio" id="hostStatusType" class="group-status-setting" name="statusType" value="hostStatusType"> Element
+			<input type="radio" checked id="monitorStatusType" class="group-status-setting" name="statusType" value="monitorStatusType"> Monitor
 			<br/>
 			<br/>
 					<label for="refreshRate">Refresh Rate:</label>
