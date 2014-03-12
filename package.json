@@ -1,6 +1,6 @@
 {
 	"name": "uptime.GroupStatusChart",
-	"version": "0.3.0-SNAPSHOT",
+	"version": "1.0.0-SNAPSHOT",
 	"description": "Use this gadget to display the element or service monitor status in a pie or bar chart format for a group of elements.",
 	"main": "src/groupStatus.js",
 	"repository": {
