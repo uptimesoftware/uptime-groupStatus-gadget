@@ -4,7 +4,7 @@
 		description="Use this gadget to display the element or service monitor status in a pie or bar chart format for a group of elements."
 		thumbnail="groupStatusThm.png"/> 
 	<gadget_version>
-		1.0
+		<%= pkg.gadget_version %>
 	</gadget_version>
 	<grid_info>
 		<supported_versions>
@@ -32,10 +32,10 @@
 
 	<link rel="stylesheet" type="text/css" href="__UPTIME_GADGET_BASE__/groupStatus.css" />
 
-	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/apiQueries.js"></script>
-	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.GroupCurrentStatusBarChart.js"></script>
-	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.GroupCurrentStatusPieChart.js"></script>
-	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/groupStatus.js"></script>
+	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/apiQueries.js?v=<%= pkg.gadget_version %>"></script>
+	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.GroupCurrentStatusBarChart.js?v=<%= pkg.gadget_version %>"></script>
+	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/uptime.GroupCurrentStatusPieChart.js?v=<%= pkg.gadget_version %>"></script>
+	<script type="text/javascript" src="__UPTIME_GADGET_BASE__/groupStatus.js?v=<%= pkg.gadget_version %>"></script>
 </head>
 
 <body>
