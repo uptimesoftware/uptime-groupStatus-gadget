@@ -98,7 +98,7 @@ $(function() {
 				settingChanged();
 			}
 		}, function(error) {
-			displayStatusBar(error, "Error Loading the List of Groups from up.time Controller");
+			displayStatusBar(error, "Error Loading the List of Groups from Uptime Controller");
 		});
 	}
 
@@ -162,7 +162,7 @@ $(function() {
 	}
 
 	function onBadAjax(error) {
-		displayStatusBar(error, "Error Communicating with up.time");
+		displayStatusBar(error, "Error Communicating with Uptime");
 	}
 
 	function gadgetDimOn() {
